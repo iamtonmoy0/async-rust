@@ -1,6 +1,25 @@
+use error_chain::error_chain;
 
 
-
-fn main() {
-    println!("Hello, world!");
+error_chain! {
+    foreign_links {
+        Io(std::io::Error);
+        HttpRequest(reqwest::Error);
+    }
 }
+
+#[tokio::main]
+
+async fn main() -> Result<()>{
+    let res= reqwest::get("http://httpbin.org/get").await?;
+    // printing status
+    println!("Status:{}",res.status());
+    // header printer
+    println!("Headers:\n{:#?}",res.headers());
+let body = res.text().await?;
+println!("ody:\n{}",body);
+Ok(())
+
+}
+
+
